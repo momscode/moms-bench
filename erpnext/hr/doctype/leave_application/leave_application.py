@@ -61,7 +61,7 @@ class LeaveApplication(Document):
 		self.cancel_attendance()
 		self.create_leave_ledger_entry(submit=False)
 
-	def validate_applicable_after(self):
+def validate_applicable_after(self):
 		if self.leave_type:
 			leave_type = frappe.get_doc("Leave Type", self.leave_type)
 			if leave_type.applicable_after > 0:
@@ -76,9 +76,9 @@ class LeaveApplication(Document):
 					if number_of_days < leave_type.applicable_after:
 						frappe.throw(_("{0} applicable after {1} working days").format(self.leave_type, leave_type.applicable_after))
 
-	#def validate_dates(self):
-		#if self.from_date and self.to_date and (getdate(self.to_date) < getdate(self.from_date)):
-			#frappe.throw(_("To date cannot be before from date"))
+	def validate_dates(self):
+		if self.from_date and self.to_date and (getdate(self.to_date) < getdate(self.from_date)):
+			frappe.throw(_("To date cannot be before from date"))
 
 		if self.half_day and self.half_day_date \
 			and (getdate(self.half_day_date) < getdate(self.from_date)
@@ -183,7 +183,7 @@ class LeaveApplication(Document):
 	def validate_block_days(self):
 		block_dates = get_applicable_block_dates(self.from_date, self.to_date,
 			self.employee, self.company)
-
+#commented
 		if block_dates and self.status == "Approved":
 			frappe.throw(_("You are not authorized to approve leaves on Block Dates"), LeaveDayBlockedError)
 
